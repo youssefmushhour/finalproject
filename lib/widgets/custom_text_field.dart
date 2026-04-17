@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
 
-class CustomTextField extends Opacity {
+class CustomTextField extends StatelessWidget {
   final String hintText;
   final IconData prefixIcon;
   final bool isPassword;
@@ -14,7 +14,7 @@ class CustomTextField extends Opacity {
     required this.prefixIcon,
     this.isPassword = false,
     required this.controller,
-    this.validator, required super.opacity,
+    this.validator,
   });
 
   @override
@@ -23,12 +23,14 @@ class CustomTextField extends Opacity {
       controller: controller,
       obscureText: isPassword,
       validator: validator,
+      style: const TextStyle(fontFamily: 'Cairo', fontSize: 14),
       decoration: InputDecoration(
         hintText: hintText,
-        prefixIcon: Icon(prefixIcon, color: AppColors.textSecondary),
+        hintStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
+        prefixIcon: Icon(prefixIcon, color: AppColors.textSecondary, size: 20),
         filled: true,
         fillColor: AppColors.white,
-        contentPadding: const EdgeInsets.all(16),
+        contentPadding: const EdgeInsets.all(18),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.grey.shade200),
