@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
-import 'core/theme/app_theme.dart';
-import 'features/dashboard/ui/dashboard_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
-  runApp(const MasroufyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  runApp(const MyApp());
 }
 
 class MasroufyApp extends StatelessWidget {
@@ -12,10 +16,10 @@ class MasroufyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Masroufy',
-      theme: AppTheme.lightTheme,
-      home: const DashboardScreen(), // هنا بنقوله ابدأ بالداشبورد
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          ),
+        
     );
   }
 }
