@@ -18,10 +18,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -29,15 +26,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -64,6 +55,40 @@ class DefaultFirebaseOptions {
     messagingSenderId: '910907428737',
     projectId: 'masroufy-app',
     storageBucket: 'masroufy-app.firebasestorage.app',
+    androidClientId: '910907428737-um3pedijn502khuus6g4u1vjhkdddbj2.apps.googleusercontent.com',
+    iosClientId: '910907428737-1mta0k9954pmhkh8grasuf9m7d4b5k6k.apps.googleusercontent.com',
     iosBundleId: 'com.example.finalproject',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyA6SSYoVIP202vZgCplEGgLg5pfJt8J9Gs',
+    appId: '1:910907428737:web:4962a183274a765254e280',
+    messagingSenderId: '910907428737',
+    projectId: 'masroufy-app',
+    authDomain: 'masroufy-app.firebaseapp.com',
+    storageBucket: 'masroufy-app.firebasestorage.app',
+    measurementId: 'G-W339DGNKP6',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyATL8HFMmnXLg9yASQVuM5zkDra8WxR2mw',
+    appId: '1:910907428737:ios:f9e122058853f34e54e280',
+    messagingSenderId: '910907428737',
+    projectId: 'masroufy-app',
+    storageBucket: 'masroufy-app.firebasestorage.app',
+    androidClientId: '910907428737-um3pedijn502khuus6g4u1vjhkdddbj2.apps.googleusercontent.com',
+    iosClientId: '910907428737-1mta0k9954pmhkh8grasuf9m7d4b5k6k.apps.googleusercontent.com',
+    iosBundleId: 'com.example.finalproject',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyA6SSYoVIP202vZgCplEGgLg5pfJt8J9Gs',
+    appId: '1:910907428737:web:908cafb5b56625b354e280',
+    messagingSenderId: '910907428737',
+    projectId: 'masroufy-app',
+    authDomain: 'masroufy-app.firebaseapp.com',
+    storageBucket: 'masroufy-app.firebasestorage.app',
+    measurementId: 'G-7NVXW4GW6F',
+  );
+
 }

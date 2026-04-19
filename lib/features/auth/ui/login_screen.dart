@@ -7,7 +7,7 @@ import '../logic/auth_bloc.dart';
 import '../logic/auth_event.dart';
 import '../logic/auth_state.dart';
 import 'register_screen.dart';
-import '../../dashboard/ui/dashboard_screen.dart';
+import '../../main_layout/ui/main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -35,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (state is AuthSuccess) {
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (_) => const DashboardScreen()),
+            MaterialPageRoute(builder: (_) => const MainScreen()),
             (route) => false,
           );
         } else if (state is AuthFailure) {
