@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../data/models/expense_model.dart';
 import '../data/repos/expense_repository.dart';
 import '../logic/expense_bloc.dart';
 import '../logic/expense_event.dart';
 import '../logic/expense_state.dart';
-
+ 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
-
+ 
   @override
   Widget build(BuildContext context) {
     // توفير الـ Bloc وتفعيل جلب البيانات فور فتح الشاشة
@@ -19,10 +20,10 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 }
-
+ 
 class DashboardView extends StatelessWidget {
   const DashboardView({super.key});
-
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,19 +44,19 @@ class DashboardView extends StatelessWidget {
                     // Header Section
                     _buildHeader(),
                     const SizedBox(height: 30),
-
+ 
                     // Total Balance Card
                     _buildBalanceCard(state.totalAmount),
                     const SizedBox(height: 20),
-
+ 
                     // Weekly Spending Chart Card
                     _buildSpendingChartCard(state.expenses, state.totalAmount),
                     const SizedBox(height: 30),
-
+ 
                     // Recent Transactions Header
                     _buildSectionHeader("Recent Transactions"),
                     const SizedBox(height: 15),
-
+ 
                     // Transactions List
                     _buildTransactionList(context, state.expenses),
                     const SizedBox(height: 20),
@@ -71,16 +72,27 @@ class DashboardView extends StatelessWidget {
       ),
     );
   }
-
+ 
   // --- UI Components ---
-
+ 
   Widget _buildHeader() {
+    final user = FirebaseAuth.instance.currentUser;
+    final String name = user?.displayName ?? user?.email?.split('@').first ?? 'U';
+    final String initial = name.isNotEmpty ? name[0].toUpperCase() : 'U';
+ 
     return Row(
       children: [
-        const CircleAvatar(
+        CircleAvatar(
           radius: 22,
-          backgroundImage: NetworkImage(
-              'https://cdn-icons-png.flaticon.com/512/4140/4140037.png'),
+          backgroundColor: const Color(0xFF085652),
+          child: Text(
+            initial,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
         ),
         const SizedBox(width: 12),
         const Text(
@@ -92,11 +104,10 @@ class DashboardView extends StatelessWidget {
           ),
         ),
         const Spacer(),
-        Icon(Icons.notifications_rounded, color: Colors.grey.shade700, size: 28),
       ],
     );
   }
-
+ 
   Widget _buildBalanceCard(double totalAmount) {
     return Container(
       width: double.infinity,
@@ -140,79 +151,12 @@ class DashboardView extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 40),
-          const Text(
-            "PRIMARY ACCOUNT",
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.2,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              _buildOverlapIcons(),
-              const Spacer(),
-              _buildTopUpButton(),
-            ],
-          ),
+          const SizedBox(height: 16),
         ],
       ),
     );
   }
-
-  Widget _buildOverlapIcons() {
-    return SizedBox(
-      width: 55,
-      height: 30,
-      child: Stack(
-        children: [
-          Positioned(
-            left: 0,
-            child: Container(
-              padding: const EdgeInsets.all(6),
-              decoration: const BoxDecoration(
-                  color: Color(0xFFA1DFD8), shape: BoxShape.circle),
-              child: const Icon(Icons.credit_card,
-                  color: Color(0xFF085652), size: 16),
-            ),
-          ),
-          Positioned(
-            left: 18,
-            child: Container(
-              padding: const EdgeInsets.all(6),
-              decoration: const BoxDecoration(
-                  color: Colors.white, shape: BoxShape.circle),
-              child: const Icon(Icons.savings_rounded,
-                  color: Color(0xFF085652), size: 16),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTopUpButton() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFA1DFD8),
-        borderRadius: BorderRadius.circular(25),
-      ),
-      child: const Row(
-        children: [
-          Text("Top Up",
-              style: TextStyle(
-                  color: Color(0xFF085652), fontWeight: FontWeight.bold)),
-          SizedBox(width: 5),
-          Icon(Icons.arrow_forward_rounded, color: Color(0xFF085652), size: 18),
-        ],
-      ),
-    );
-  }
-
+ 
   Widget _buildSpendingChartCard(List<ExpenseModel> expenses, double totalAmount) {
     return Container(
       width: double.infinity,
@@ -261,22 +205,22 @@ class DashboardView extends StatelessWidget {
       ),
     );
   }
-
+ 
   Widget _buildDynamicBarChart(List<ExpenseModel> expenses) {
     Map<int, double> dayTotals = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0};
     DateTime now = DateTime.now();
     DateTime startOfWeek = now.subtract(Duration(days: now.weekday - 1));
-
+ 
     for (var expense in expenses) {
       if (expense.date.isAfter(startOfWeek.subtract(const Duration(seconds: 1)))) {
         int day = expense.date.weekday;
         dayTotals[day] = (dayTotals[day] ?? 0) + expense.amount;
       }
     }
-
+ 
     double maxAmount = dayTotals.values.fold(0, (max, e) => e > max ? e : max);
     if (maxAmount == 0) maxAmount = 1;
-
+ 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -291,11 +235,11 @@ class DashboardView extends StatelessWidget {
       ],
     );
   }
-
+ 
   Widget _buildBarItem(String label, double amount, double maxAmount, bool isToday) {
     double height = (amount / maxAmount) * 90;
     if (height < 5 && amount > 0) height = 5;
-
+ 
     return Column(
       children: [
         Container(
@@ -328,7 +272,7 @@ class DashboardView extends StatelessWidget {
       ],
     );
   }
-
+ 
   Widget _buildSectionHeader(String title) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -350,7 +294,7 @@ class DashboardView extends StatelessWidget {
       ],
     );
   }
-
+ 
   Widget _buildTransactionList(BuildContext context, List<ExpenseModel> expenses) {
     if (expenses.isEmpty) {
       return const Center(
@@ -416,7 +360,7 @@ class DashboardView extends StatelessWidget {
       },
     );
   }
-
+ 
   Widget _buildCategoryIcon(String category) {
     IconData iconData;
     switch (category) {

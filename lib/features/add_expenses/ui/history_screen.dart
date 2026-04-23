@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../dashboard/data/models/expense_model.dart';
 import '../../dashboard/data/repos/expense_repository.dart';
 import '../../dashboard/logic/expense_bloc.dart';
 import '../../dashboard/logic/expense_event.dart';
 import '../../dashboard/logic/expense_state.dart';
-
+ 
 class HistoryScreen extends StatelessWidget {
   const HistoryScreen({super.key});
-
+ 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -18,19 +19,18 @@ class HistoryScreen extends StatelessWidget {
     );
   }
 }
-
+ 
 class HistoryView extends StatefulWidget {
   const HistoryView({super.key});
-
+ 
   @override
   State<HistoryView> createState() => _HistoryViewState();
 }
-
+ 
 class _HistoryViewState extends State<HistoryView> {
   String searchQuery = "";
   String selectedCategory = "All Time";
-
-  // القائمة الكاملة للتصنيفات شاملة Retail وكل اللي ضفناه في الـ Add
+ 
   final List<String> filters = [
     "All Time",
     "Food",
@@ -42,7 +42,7 @@ class _HistoryViewState extends State<HistoryView> {
     "Education",
     "Others"
   ];
-
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,12 +50,21 @@ class _HistoryViewState extends State<HistoryView> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: const Padding(
-          padding: EdgeInsets.all(8.0),
-          child: CircleAvatar(
-            backgroundImage: NetworkImage(
-                'https://cdn-icons-png.flaticon.com/512/4140/4140048.png'),
-          ),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Builder(builder: (context) {
+            final user = FirebaseAuth.instance.currentUser;
+            final String name = user?.displayName ?? user?.email?.split('@').first ?? 'U';
+            final String initial = name.isNotEmpty ? name[0].toUpperCase() : 'U';
+            return CircleAvatar(
+              backgroundColor: const Color(0xFF085652),
+              child: Text(initial,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16)),
+            );
+          }),
         ),
         title: const Text(
           "Masroufy",
@@ -87,7 +96,7 @@ class _HistoryViewState extends State<HistoryView> {
                   expense.category == selectedCategory;
               return matchesSearch && matchesCategory;
             }).toList();
-
+ 
             return SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: Column(
@@ -95,7 +104,7 @@ class _HistoryViewState extends State<HistoryView> {
                 children: [
                   // 1. Total Spent Card
                   _buildTotalSpentCard(state.totalAmount),
-
+ 
                   // 2. Search Bar
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -114,7 +123,7 @@ class _HistoryViewState extends State<HistoryView> {
                       ),
                     ),
                   ),
-
+ 
                   // 3. Filter Chips
                   SizedBox(
                     height: 70,
@@ -151,7 +160,7 @@ class _HistoryViewState extends State<HistoryView> {
                       },
                     ),
                   ),
-
+ 
                   // 4. Grouped Transactions
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -183,7 +192,7 @@ class _HistoryViewState extends State<HistoryView> {
       ),
     );
   }
-
+ 
   Widget _buildTotalSpentCard(double total) {
     return Container(
       width: double.infinity,
@@ -239,7 +248,7 @@ class _HistoryViewState extends State<HistoryView> {
       ),
     );
   }
-
+ 
   Widget _buildDateHeader(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 15),
@@ -257,7 +266,7 @@ class _HistoryViewState extends State<HistoryView> {
       ),
     );
   }
-
+ 
   Widget _buildTransactionItem(ExpenseModel expense) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -317,7 +326,7 @@ class _HistoryViewState extends State<HistoryView> {
       ),
     );
   }
-
+ 
   IconData _getCategoryIcon(String category) {
     switch (category) {
       case 'Food': return Icons.restaurant;

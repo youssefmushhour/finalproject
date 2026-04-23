@@ -3,17 +3,18 @@ import '../../dashboard/ui/dashboard_screen.dart';
 import '../../add_expenses/ui/history_screen.dart'; 
 import '../../add_expenses/ui/add_expense_screen.dart';
 import '../../split_bill/ui/split_bill_screen.dart';
-
+import '../../profile/ui/profile_screen.dart';
+ 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
-
+ 
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
-
+ 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
-
+ 
   Widget _buildBody() {
     switch (_currentIndex) {
       case 0:
@@ -29,12 +30,12 @@ class _MainScreenState extends State<MainScreen> {
           onSaveSuccess: () => setState(() => _currentIndex = 0),
         );
       case 4:
-        return const Scaffold(body: Center(child: Text("Profile")));
+        return const ProfileScreen();
       default:
         return const DashboardScreen();
     }
   }
-
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +64,7 @@ class _MainScreenState extends State<MainScreen> {
       ),
     );
   }
-
+ 
   Widget _buildNavItem(int index, IconData icon, String label) {
     bool isSelected = _currentIndex == index;
     return GestureDetector(
@@ -95,7 +96,7 @@ class _MainScreenState extends State<MainScreen> {
       ),
     );
   }
-
+ 
   Widget _buildAddButton() {
     bool isSelected = _currentIndex == 2;
     return GestureDetector(
