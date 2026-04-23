@@ -56,13 +56,17 @@ class _HistoryViewState extends State<HistoryView> {
             final user = FirebaseAuth.instance.currentUser;
             final String name = user?.displayName ?? user?.email?.split('@').first ?? 'U';
             final String initial = name.isNotEmpty ? name[0].toUpperCase() : 'U';
+            final String? photoURL = user?.photoURL;
             return CircleAvatar(
               backgroundColor: const Color(0xFF085652),
-              child: Text(initial,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16)),
+              backgroundImage: photoURL != null ? NetworkImage(photoURL) : null,
+              child: photoURL == null
+                  ? Text(initial,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16))
+                  : null,
             );
           }),
         ),
@@ -73,14 +77,6 @@ class _HistoryViewState extends State<HistoryView> {
               fontWeight: FontWeight.bold,
               fontSize: 22),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_none_rounded,
-                color: Color(0xFF085652), size: 28),
-            onPressed: () {},
-          ),
-          const SizedBox(width: 10),
-        ],
       ),
       body: BlocBuilder<ExpenseBloc, ExpenseState>(
         builder: (context, state) {

@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'create_group_screen.dart';
 import 'group_detail_screen.dart';
 import '../logic/groups_cubit.dart';
 import '../data/models/group_model.dart';
-
+ 
 class SplitBillScreen extends StatefulWidget {
   final VoidCallback onSaveSuccess;
   const SplitBillScreen({super.key, required this.onSaveSuccess});
-
+ 
   @override
   State<SplitBillScreen> createState() => _SplitBillScreenState();
 }
-
+ 
 class _SplitBillScreenState extends State<SplitBillScreen> {
   @override
   void initState() {
     super.initState();
     context.read<GroupsCubit>().fetchGroups();
   }
-
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,11 +28,25 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: const Padding(
-          padding: EdgeInsets.only(left: 16),
-          child: CircleAvatar(
-            backgroundImage: NetworkImage('https://cdn-icons-png.flaticon.com/512/4140/4140048.png'),
-          ),
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16),
+          child: Builder(builder: (context) {
+            final user = FirebaseAuth.instance.currentUser;
+            final String name = user?.displayName ?? user?.email?.split('@').first ?? 'U';
+            final String initial = name.isNotEmpty ? name[0].toUpperCase() : 'U';
+            final String? photoURL = user?.photoURL;
+            return CircleAvatar(
+              backgroundColor: const Color(0xFF085652),
+              backgroundImage: photoURL != null ? NetworkImage(photoURL) : null,
+              child: photoURL == null
+                  ? Text(initial,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16))
+                  : null,
+            );
+          }),
         ),
         title: const Text("Masroufy",
             style: TextStyle(color: Color(0xFF085652), fontWeight: FontWeight.bold)),
@@ -74,7 +89,7 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
       ),
     );
   }
-
+ 
   Widget _buildHeader(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -119,7 +134,7 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
       ],
     );
   }
-
+ 
   Widget _buildGroupLargeCard(BuildContext context, GroupModel group) {
     IconData getIcon() {
       switch (group.category) {
@@ -135,7 +150,7 @@ class _SplitBillScreenState extends State<SplitBillScreen> {
           return Icons.group_rounded;
       }
     }
-
+ 
     return GestureDetector(
       // التصليح هنا: شلنا الـ groupName وبعتنا الـ group بس
       onTap: () => Navigator.push(

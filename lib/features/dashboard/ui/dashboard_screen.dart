@@ -79,20 +79,24 @@ class DashboardView extends StatelessWidget {
     final user = FirebaseAuth.instance.currentUser;
     final String name = user?.displayName ?? user?.email?.split('@').first ?? 'U';
     final String initial = name.isNotEmpty ? name[0].toUpperCase() : 'U';
+    final String? photoURL = user?.photoURL;
  
     return Row(
       children: [
         CircleAvatar(
           radius: 22,
           backgroundColor: const Color(0xFF085652),
-          child: Text(
-            initial,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
-          ),
+          backgroundImage: photoURL != null ? NetworkImage(photoURL) : null,
+          child: photoURL == null
+              ? Text(
+                  initial,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                )
+              : null,
         ),
         const SizedBox(width: 12),
         const Text(
